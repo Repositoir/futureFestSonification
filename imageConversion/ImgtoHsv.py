@@ -1,19 +1,36 @@
-import cv2
+import cv2, time
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-img = cv2.imread('img1.tif')
+img = cv2.imread('eqImg.png')
+img2 = img
 
-#plt.imshow(img)
+height, width, channels = img.shape
+print(img.shape)
+print(img.shape[0] % 11, img.shape[1] % 22)
+
+W_SIZE = 22
+H_SIZE = 11
+count = 0
+
+for ih in range(H_SIZE ):
+   for iw in range(W_SIZE ):
+   
+      x = width/W_SIZE * iw 
+      y = height/H_SIZE * ih
+      h = (height / H_SIZE)
+      w = (width / W_SIZE )
+      #print(x,y,h,w)
+      img = img[int(y):int(y+h), int(x):int(x+w)]
+      count += 1
+      plt.imshow(img)
+      plt.show()
+      NAME = str(time.time()) 
+      cv2.imwrite("Output Images/" + str(ih)+str(iw) +  ".png",img)
+      img = img2
+
+print(count)
+
 #plt.show()
-
-imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-#plt.imshow(imgHSV)
-plt.hist(imgHSV.ravel(),256,[0,256], label="hist Data")
-plt.plot(cv2.calcHist([imgHSV], [0], None, [256], [0, 256]), color='blue')
-plt.plot(cv2.calcHist([imgHSV], [1], None, [256], [0, 256]), color='green')
-plt.plot(cv2.calcHist([imgHSV], [2], None, [256], [0, 256]), color='red')
-plt.show()
 
