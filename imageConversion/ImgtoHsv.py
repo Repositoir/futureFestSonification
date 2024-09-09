@@ -3,34 +3,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-img = cv2.imread('eqImg.png')
-img2 = img
+def img2SmallImg(img, H_SIZE, W_SIZE):
+   listOfImages = []
+   for ih in range(H_SIZE ):
+     for iw in range(W_SIZE ):
+     
+        x = width/W_SIZE * iw 
+        y = height/H_SIZE * ih
+        h = (height / H_SIZE)
+        w = (width / W_SIZE )
+        #print(x,y,h,w)
+        img2 = img[int(y):int(y+h), int(x):int(x+w)]
+        listOfImages.append(img2)
+   
+   return listofImages
 
-height, width, channels = img.shape
-print(img.shape)
-print(img.shape[0] % 11, img.shape[1] % 22)
+
+
+image = cv2.imread('./eqImg.png')
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+print(type(image))
+height, width, channels = image.shape
+
+print(image.shape)
+print(image.shape[0] % 11, image.shape[1] % 22)
+print(image[[0], [0]])
 
 W_SIZE = 22
 H_SIZE = 11
 count = 0
 
-for ih in range(H_SIZE ):
-   for iw in range(W_SIZE ):
-   
-      x = width/W_SIZE * iw 
-      y = height/H_SIZE * ih
-      h = (height / H_SIZE)
-      w = (width / W_SIZE )
-      #print(x,y,h,w)
-      img = img[int(y):int(y+h), int(x):int(x+w)]
-      count += 1
-      plt.imshow(img)
-      plt.show()
-      NAME = str(time.time()) 
-      cv2.imwrite("Output Images/" + str(ih)+str(iw) +  ".png",img)
-      img = img2
 
-print(count)
+
+print(img2SmallImg(image, H_SIZE, W_SIZE))
 
 #plt.show()
 
