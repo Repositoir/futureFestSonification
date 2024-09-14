@@ -2,7 +2,7 @@ import cv2, time
 import matplotlib.pyplot as plt
 import numpy as np
 
-image = cv2.imread('./imageConversion/eqImg.png')
+image = cv2.imread('./eqImg.png')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def img2SmallImg(img, H_SIZE, W_SIZE):
@@ -20,7 +20,8 @@ def img2SmallImg(img, H_SIZE, W_SIZE):
 
     return np.array(listOfImages)
 
-#below fxn not done!
+
+# below fxn not done!
 def smallImg2AvgArr(arr):
    lst2npArray = np.array(arr)
    lst = lst2npArray.transpose((3, 0, 1, 2))
