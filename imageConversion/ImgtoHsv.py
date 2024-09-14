@@ -47,6 +47,9 @@ def convert2grey(img):
 
     return img
 
+def map(x, in_min, in_max, out_min, out_max):
+  return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+
 height, width, channels = image.shape
 
 print(image.shape)
@@ -64,9 +67,17 @@ print(lst[0][0][0])   #This is one pixel, the top right most pixel
 
 lst[0][0]      #This is one column of pixels
 
-print(smallImg2AvgArr(lst))
+#print(smallImg2AvgArr(lst))
 #plt.show()
 
 
 #convert to greyscale 
 grayLst = convert2grey(image)
+print(grayLst[0])
+# 28 to 7040
+#
+normLst = []
+for i in range(len(grayLst[0])):
+    normNum = map(int(grayLst[0][i]), 0, 255, 28, 7040)
+    normLst.append(normNum)
+print(normLst)
