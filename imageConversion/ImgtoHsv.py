@@ -2,7 +2,7 @@ import cv2, time
 import matplotlib.pyplot as plt
 import numpy as np
 
-image = cv2.imread('./eqImg.png')
+image = cv2.imread('./imageConversion/eqImg.png')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def img2SmallImg(img, H_SIZE, W_SIZE):
@@ -77,8 +77,9 @@ grayLst = convert2grey(image)
 print(grayLst[0])
 # 28 to 7040
 #
-normLst = []
-for i in range(len(grayLst[0])):
-    normNum = map(int(grayLst[0][i]), 0, 255, 28, 7040)
-    normLst.append(normNum)
-print(normLst)
+normLst = [[0 for j in range(len(grayLst[0]))] for i in range(len(grayLst))]
+for i in range(len(grayLst)):
+    for j in range(len(grayLst[i])):
+        normNum = map(int(grayLst[i][j]), 0, 255, 28, 7040)
+        normLst[i][j] = normNum
+#print(normLst)
