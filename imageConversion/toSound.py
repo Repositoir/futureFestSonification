@@ -1,9 +1,11 @@
 import numpy as np
 import sounddevice as sd
 
+
 chords = {
     "C major":["C", "E", "G"],
     "G major":["G", "B", "D"],
+    "A minor": ["A", "C", "E"],
     "F major":["F", "A", "C"],
     "D major":["D", "F#", "A"]
 }
@@ -41,25 +43,6 @@ def play_note(note, octave, duration, sample_rate=44100):
     sd.play(wave, samplerate=sample_rate)
     sd.wait()  # Wait until the sound finishes playing
 
-# Example usage
-# note = "C"
-# octave = 4
-# duration = 0.7 # Duration regarding crotchet = 0.7, minim = 1.4, quaver = 0.35
-# play_note(note, octave, duration)
-# play_note("C", octave, duration)
-# play_note("G", octave, duration)
-# play_note("G", octave, duration)
-# play_note("A", octave, duration)
-# play_note("A", octave, duration)
-# play_note("G", octave, duration * 2)
-# play_note("F", octave, duration)
-# play_note("F", octave, duration)
-# play_note("E", octave, duration)
-# play_note("E", octave, duration)
-# play_note("D", octave, duration)
-# play_note("D", octave, duration)
-# play_note("C", octave, duration * 4)
-
 def play_chord(notes, octave, duration, sample_rate=44100):
     # Generate the wave for each note in the chord
     chord_wave = sum(generate_sine_wave(get_frequency(note, octave), duration, sample_rate) for note in notes)
@@ -71,10 +54,10 @@ def play_chord(notes, octave, duration, sample_rate=44100):
     sd.play(chord_wave, samplerate=sample_rate)
     sd.wait()  # Wait until the sound finishes playing
 
-notes = ["A", "C", "E"]
-octave = 4
-duration = 1.0  # 1 second duration
-play_chord(["C", "E", "G"], octave, duration)
-play_chord(["G", "B", "D"], octave, duration)
-play_chord(["A", "C", "E"], octave, duration)
-play_chord(["F", "A", "C"], octave, duration)
+
+# octave = 4
+# duration = 1.0  # 1 second duration
+# play_chord(["C", "E", "G"], octave, duration)
+# play_chord(["G", "B", "D"], octave, duration)
+# play_chord(["A", "C", "E"], octave, duration)
+# play_chord(["F", "A", "C"], octave, duration)
