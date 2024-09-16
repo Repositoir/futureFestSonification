@@ -1,5 +1,6 @@
 import numpy as np
 import sounddevice as sd
+from ImgtoHsv import normLst
 
 
 chords = {
@@ -38,14 +39,14 @@ def get_frequency(note, octave):
 
 # Play a note
 def play_note(note, octave, duration, sample_rate=44100):
-    frequency = get_frequency(note, octave)
-    wave = generate_sine_wave(frequency, duration, sample_rate)
+    #frequency = get_frequency(note, octave)
+    wave = generate_sine_wave(note, duration, sample_rate)
     sd.play(wave, samplerate=sample_rate)
     sd.wait()  # Wait until the sound finishes playing
 
 def play_chord(notes, octave, duration, sample_rate=44100):
     # Generate the wave for each note in the chord
-    chord_wave = sum(generate_sine_wave(get_frequency(note, octave), duration, sample_rate) for note in notes)
+    chord_wave = sum(generate_sine_wave(int(note), duration, sample_rate) for note in notes)
 
     # Normalize the wave to avoid clipping
     chord_wave /= len(notes)
@@ -55,9 +56,20 @@ def play_chord(notes, octave, duration, sample_rate=44100):
     sd.wait()  # Wait until the sound finishes playing
 
 
+
 # octave = 4
 # duration = 1.0  # 1 second duration
 # play_chord(["C", "E", "G"], octave, duration)
 # play_chord(["G", "B", "D"], octave, duration)
 # play_chord(["A", "C", "E"], octave, duration)
 # play_chord(["F", "A", "C"], octave, duration)
+
+notes = ["A", "C", "E"]
+octave = 4
+duration = 5.0  # 1 second duration
+#play_chord(["C", "E", "G"], octave, duration)
+#play_chord(["G", "B", "D"], octave, duration)
+#play_chord(["A", "C", "E"], octave, duration)
+for i in normLst:
+    play_chord(i, octave, duration)
+

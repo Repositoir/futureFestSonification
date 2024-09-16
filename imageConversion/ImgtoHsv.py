@@ -4,7 +4,7 @@ import numpy as np
 from toSound import generate_sine_wave, get_frequency, play_note, play_chord
 import sounddevice as sd
 
-image = cv2.imread('./eqImg.png')
+image = cv2.imread('./imageConversion/eqImg.png')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def img2SmallImg(img, H_SIZE, W_SIZE):
@@ -76,6 +76,7 @@ grayLst = convert2grey(image)
 print(grayLst[0])
 # 28 to 7040
 #
+
 normLst = []
 for i in range(len(grayLst[0])):
     normNum = map(int(grayLst[0][i]), 0, 255, 28, 7040)
@@ -131,3 +132,11 @@ for i in range(0, len(normLst), 3):
     chord_wave_with_adsr = apply_adsr(chord_wave, 0.1, 0.4, sample_rate=44100)
     sd.play(chord_wave_with_adsr, samplerate=44100)
     sd.wait()
+
+normLst = [[0 for j in range(len(grayLst[0]))] for i in range(len(grayLst))]
+for i in range(len(grayLst)):
+    for j in range(len(grayLst[i])):
+        normNum = map(int(grayLst[i][j]), 0, 255, 28, 7040)
+        normLst[i][j] = normNum
+#print(normLst)
+
