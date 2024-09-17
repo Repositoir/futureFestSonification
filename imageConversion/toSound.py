@@ -27,12 +27,12 @@ def get_major_triad(midi_note):
     perfect_fifth = midi_note + 7
     return [midi_note, major_third, perfect_fifth]
 
-
-midi_notes_from_normLst = []
-for freq in normLst:
+arrRed = arrRed.flatten()
+midi_notes_from_arrRed = []
+for freq in arrRed:
     midi_note = freq_to_midi_note(freq)
     major_triad = get_major_triad(midi_note)
-    midi_notes_from_normLst.append(major_triad)
+    midi_notes_from_arrRed.append(major_triad)
 
 track = 0
 channel = 0
@@ -47,15 +47,15 @@ MyMIDI = MIDIFile(1)  # One track
 
 MyMIDI.addTempo(track, time, tempo)
 
-for i, triad in enumerate(midi_notes_from_normLst):
+for i, triad in enumerate(midi_notes_from_arrRed):
     for j, pitch in enumerate(triad):
         MyMIDI.addNote(track, channel, pitch, time + i * 3 + j * arpeggio_spacing, duration, volume)
 
 # Save the MIDI file
-with open("normLst_melody.mid", "wb") as output_file:
+with open("normLst_melody_red.mid", "wb") as output_file:
     MyMIDI.writeFile(output_file)
 
-print("MIDI file saved as 'normLst_melody.mid'")
+print("MIDI file saved as 'normLst_melody_red.mid'")
 
 
 

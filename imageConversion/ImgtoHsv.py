@@ -47,7 +47,7 @@ def convert2grey(img):
 
     return img
 
-def map_values(x, in_min, in_max):
+def convert2freq(x, in_min, in_max):
   out_min = 28
   out_max = 7040
   return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
@@ -134,8 +134,15 @@ print(greyMedArr[0][0])
 # plt.plot(greyMedArr[0][0], 'o')
 # plt.show()
 
-exportThisArrayRED = np.matmul(lstRGB[0], greyMedArr)
-exportThisArrayGREEN = np.matmul(lstRGB[1], greyMedArr)
-exportThisArrayBLUE = np.matmul(lstRGB[2], greyMedArr)
+matMulRed = np.matmul(lstRGB[0], greyMedArr).transpose((1, 0))
+matMulGreen = np.matmul(lstRGB[1], greyMedArr).transpose((1, 0))
+matMulBlue = np.matmul(lstRGB[2], greyMedArr).transpose((1, 0))
 
-print(exportThisArrayRED)
+print(matMulRed)
+
+exportThisArrayRED = convert2freq(matMulRed, np.min(matMulRed), np.max(matMulRed))
+exportThisArrayGREEN = convert2freq(matMulGreen, np.min(matMulGreen), np.max(matMulGreen))
+exportThisArrayBLUE = convert2freq(matMulBlue, np.min(matMulBlue), np.max(matMulBlue))
+print(exportThisArrayRED.shape)
+# plt.imshow(matMulRed, cmap='gray')
+# plt.show()
