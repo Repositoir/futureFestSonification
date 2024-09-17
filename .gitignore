@@ -4,6 +4,7 @@
 
 *.tif
 *.png
+*.mid
 
 # dependencies
 /node_modules

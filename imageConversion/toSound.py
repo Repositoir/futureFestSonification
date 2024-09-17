@@ -1,15 +1,62 @@
 import numpy as np
 import sounddevice as sd
 from ImgtoHsv import normLst
-
-
-chords = {
+from midiutil import MIDIFile
+from mingus.core import chords
+NOTES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
+OCTAVES = list(range(11))
+NOTES_IN_OCTAVE = len(NOTES)
+CHORDS = {
     "C major":["C", "E", "G"],
     "G major":["G", "B", "D"],
     "A minor": ["A", "C", "E"],
     "F major":["F", "A", "C"],
     "D major":["D", "F#", "A"]
 }
+
+def freq_to_midi_note(freq):
+    if freq <= 0:
+        raise ValueError("Frequency must be a positive value.")
+    midi_note = int(69 + 12 * np.log2(freq / 440.0))
+    return midi_note
+
+def get_major_triad(midi_note):
+    major_third = midi_note + 4
+    perfect_fifth = midi_note + 7
+    return [midi_note, major_third, perfect_fifth]
+
+
+midi_notes_from_normLst = []
+for freq in normLst:
+    midi_note = freq_to_midi_note(freq)
+    major_triad = get_major_triad(midi_note)
+    midi_notes_from_normLst.append(major_triad)
+
+track = 0
+channel = 0
+time = 0  # In beats
+duration = 1  # In beats
+tempo = 180
+volume = 127  # 0-127
+arpeggio_spacing = 1
+
+MyMIDI = MIDIFile(1)  # One track
+
+
+MyMIDI.addTempo(track, time, tempo)
+
+for i, triad in enumerate(midi_notes_from_normLst):
+    for j, pitch in enumerate(triad):
+        MyMIDI.addNote(track, channel, pitch, time + i * 3 + j * arpeggio_spacing, duration, volume)
+
+# Save the MIDI file
+with open("normLst_melody.mid", "wb") as output_file:
+    MyMIDI.writeFile(output_file)
+
+print("MIDI file saved as 'normLst_melody.mid'")
+
+
+
 
 # Function to generate a sine wave for a given frequency and duration
 def generate_sine_wave(frequency, duration, sample_rate=44100):
@@ -54,22 +101,3 @@ def play_chord(notes, octave, duration, sample_rate=44100):
     # Play the chord
     sd.play(chord_wave, samplerate=sample_rate)
     sd.wait()  # Wait until the sound finishes playing
-
-
-
-# octave = 4
-# duration = 1.0  # 1 second duration
-# play_chord(["C", "E", "G"], octave, duration)
-# play_chord(["G", "B", "D"], octave, duration)
-# play_chord(["A", "C", "E"], octave, duration)
-# play_chord(["F", "A", "C"], octave, duration)
-
-notes = ["A", "C", "E"]
-octave = 4
-duration = 5.0  # 1 second duration
-#play_chord(["C", "E", "G"], octave, duration)
-#play_chord(["G", "B", "D"], octave, duration)
-#play_chord(["A", "C", "E"], octave, duration)
-for i in normLst:
-    play_chord(i, octave, duration)
-
