@@ -24,10 +24,19 @@ def img2SmallImg(img, H_SIZE, W_SIZE):
 # below fxn not done!
 # What part isn't done?
 def smallImg2AvgArr(arr):
-   lst = arr.transpose((2, 0, 1))
-   avg = np.mean(lst, axis= 1, dtype= int)
-   avg = np.mean(avg, axis=1, dtype= int)
-   return avg.tolist()
+    if len(arr.shape) == 3:
+        lst = arr.transpose((2, 0, 1))
+        avg = np.mean(lst, axis= 1, dtype= int)
+        avg = np.mean(avg, axis=1, dtype= int)
+    else:
+       return "Wrong Input!"
+    
+    return avg
+
+def avgArrTranspose(arr):
+    arr = np.array(arr)
+    arr = arr.transpose((1, 0))
+    return arr
 
 def convert2grey(img):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -38,10 +47,26 @@ def convert2grey(img):
 
     return img
 
-def map(x, in_min, in_max):
+def map_values(x, in_min, in_max):
   out_min = 28
   out_max = 7040
   return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+
+def normalize_array(arr):
+    norm_arr = (arr - np.min(arr)) / (np.max(arr) - np.min(arr) + 1e-8 )
+    return norm_arr
+
+def greyMedianArr(arr):
+    grayMedianArr = []
+    for i in range(len(arr)):
+        for j in range(len(arr[0])):
+            grayNmld = normalize_array(arr[i][j])  # Ensure this function is defined
+            gNmldAvg = np.median(grayNmld)  # Calculate the median of the normalized array
+            grayMedianArr.append(gNmldAvg)  # Append the median to the list
+
+    grayMedianArr = np.array(grayMedianArr)
+
+    return grayMedianArr
 
 height, width, channels = image.shape
 
@@ -58,18 +83,33 @@ lst = img2SmallImg(image, H_SIZE, W_SIZE)
 print(lst.shape)
 print(lst[0][0][0])
 
+#get Average values of the 242 images
 lstOfAvgs = [smallImg2AvgArr(lst[i]) for i in range(len(lst))]
-print(len(lstOfAvgs))
+print(lstOfAvgs[0])
 
-#convert to greyscale 
+lstRGB = avgArrTranspose(lstOfAvgs)
+
+# plt.plot(lstRGB[0][0], 'o', color= 'red')
+# plt.plot(lstRGB[1][0], 'o', color= 'green')
+# plt.plot(lstRGB[2][0], 'o', color= 'blue')
+# plt.show()
+
+# Map each Color Value to a frequency? 
+# Not sure how useful that would be? 
+# I was thinking of more, each R-G-B value to be a Chord, ahhh.
+# I don't what a triad is lol
+
+
+
+
+# #convert to greyscale 
 grayLst = convert2grey(image)
 print(grayLst[0])
 # 28 to 7040
-#
+grayLstSmall = img2SmallImg(grayLst, H_SIZE, W_SIZE)
+print(grayLstSmall[0])
+print(grayLstSmall.shape)
 
-normLst = []
-for i in range(len(grayLst[0])):
-    normNum = map(int(grayLst[0][i]), 0, 255)
-    normLst.append(normNum)
-print(normLst)
-
+# PLEASE OPTIMIZE THIS FUCKIN CODE
+# IT IS A 3D ARRAY WHOSE MEDIAN SHOULD RETURN A 1D ARRAY
+greyMedArr = greyMedianArr(grayLstSmall)
