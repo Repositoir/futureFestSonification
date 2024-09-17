@@ -27,9 +27,9 @@ def get_major_triad(midi_note):
     perfect_fifth = midi_note + 7
     return [midi_note, major_third, perfect_fifth]
 
-arrRed = arrRed.flatten()
+#arrRed = arrRed.flatten()
 midi_notes_from_arrRed = []
-for freq in arrRed:
+for freq in arrRed[0]:
     midi_note = freq_to_midi_note(freq)
     major_triad = get_major_triad(midi_note)
     midi_notes_from_arrRed.append(major_triad)
