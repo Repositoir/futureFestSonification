@@ -1,6 +1,8 @@
 import numpy as np
 import sounddevice as sd
-from ImgtoHsv import normLst
+from ImgtoHsv import exportThisArrayRED as arrRed
+from ImgtoHsv import exportThisArrayBLUE as arrBlue
+from ImgtoHsv import exportThisArrayGREEN as arrGreen
 from midiutil import MIDIFile
 from mingus.core import chords
 NOTES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
