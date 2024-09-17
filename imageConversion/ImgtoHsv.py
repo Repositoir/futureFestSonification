@@ -23,21 +23,10 @@ def img2SmallImg(img, H_SIZE, W_SIZE):
 
 # below fxn not done!
 def smallImg2AvgArr(arr):
-   lst2npArray = np.array(arr)
-   lst = lst2npArray.transpose((3, 0, 1, 2))
-   avg = lst.mean(axis= 1, dtype= int)
-   avg = avg.mean(axis=1, dtype= int)
-   avg = avg.mean(axis=1, dtype= int)
-    # What i did,
-    # So i think you wanted an average one RGB pixel value of the small image
-    # So i first transposed the orignal matrix to set according to the R, G, B values first
-    # Then i took the average over the second column of the matrix, first it averages over all the images
-    # second it averages over all the columns in the image
-    # third it averages over all the rows in the image
-    # Hence finally givng an average of all the pixels!
-    # i wish i was smart enough to implement this in a smaeter way, 
-    # this definitely is stupid af 
-   return avg
+   lst = arr.transpose((2, 0, 1))
+   avg = np.mean(lst, axis= 1, dtype= int)
+   avg = np.mean(avg, axis=1, dtype= int)
+   return avg.tolist()
 
 def convert2grey(img):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -48,7 +37,9 @@ def convert2grey(img):
 
     return img
 
-def map(x, in_min, in_max, out_min, out_max):
+def map(x, in_min, in_max):
+  out_min = 28
+  out_max = 7040
   return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 height, width, channels = image.shape
@@ -69,17 +60,19 @@ print(lst[0][0][0])   #This is one pixel, the top right most pixel
 lst[0][0]      #This is one column of pixels
 
 #print(smallImg2AvgArr(lst))
-#plt.show()
 
+lstOfAvgs = [smallImg2AvgArr(lst[i]) for i in range(len(lst))]
+plt.imshow(lstOfAvgs)
+plt.show()
 
 #convert to greyscale 
 grayLst = convert2grey(image)
 print(grayLst[0])
 # 28 to 7040
 #
-normLst = [[0 for j in range(len(grayLst[0]))] for i in range(len(grayLst))]
+'''normLst = [[0 for j in range(len(grayLst[0]))] for i in range(len(grayLst))]
 for i in range(len(grayLst)):
     for j in range(len(grayLst[i])):
         normNum = map(int(grayLst[i][j]), 0, 255, 28, 7040)
         normLst[i][j] = normNum
-#print(normLst)
+#print(normLst)'''
