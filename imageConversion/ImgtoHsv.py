@@ -58,15 +58,35 @@ def normalize_array(arr):
 
 def greyMedianArr(arr):
     grayMedianArr = []
+
     for i in range(len(arr)):
         for j in range(len(arr[0])):
             grayNmld = normalize_array(arr[i][j])  # Ensure this function is defined
             gNmldAvg = np.median(grayNmld)  # Calculate the median of the normalized array
             grayMedianArr.append(gNmldAvg)  # Append the median to the list
 
+    # Optionally, convert grayMedianArr to a NumPy array if needed
     grayMedianArr = np.array(grayMedianArr)
 
     return grayMedianArr
+    
+def normalize_3d_array(arr, y_scale= 0.5):
+    
+    # Compute min and max along the third dimension
+    min_vals = np.min(arr, axis=0, keepdims=True)
+    max_vals = np.max(arr, axis=0, keepdims=True)
+    
+    # Avoid division by zero
+    range_vals = max_vals - min_vals
+    range_vals[range_vals == 0] = 1  # Replace zero ranges with one to avoid division by zero
+    
+    # Perform normalization
+    normalized_arr = (arr - min_vals) / range_vals
+    # Scale it to spread out more
+    normalized_arr **= y_scale
+
+
+    return normalized_arr
 
 height, width, channels = image.shape
 
@@ -85,7 +105,7 @@ print(lst[0][0][0])
 
 #get Average values of the 242 images
 lstOfAvgs = [smallImg2AvgArr(lst[i]) for i in range(len(lst))]
-print(lstOfAvgs[0])
+print(len(lstOfAvgs))
 
 lstRGB = avgArrTranspose(lstOfAvgs)
 
@@ -104,12 +124,18 @@ lstRGB = avgArrTranspose(lstOfAvgs)
 
 # #convert to greyscale 
 grayLst = convert2grey(image)
-print(grayLst[0])
 # 28 to 7040
 grayLstSmall = img2SmallImg(grayLst, H_SIZE, W_SIZE)
-print(grayLstSmall[0])
-print(grayLstSmall.shape)
 
-# PLEASE OPTIMIZE THIS FUCKIN CODE
-# IT IS A 3D ARRAY WHOSE MEDIAN SHOULD RETURN A 1D ARRAY
-greyMedArr = greyMedianArr(grayLstSmall)
+greyMedArr = normalize_3d_array(grayLstSmall, 0.7)
+greyMedArr = greyMedArr.transpose((2, 0, 1))
+print(greyMedArr.shape)
+print(greyMedArr[0][0])
+# plt.plot(greyMedArr[0][0], 'o')
+# plt.show()
+
+exportThisArrayRED = np.matmul(lstRGB[0], greyMedArr)
+exportThisArrayGREEN = np.matmul(lstRGB[1], greyMedArr)
+exportThisArrayBLUE = np.matmul(lstRGB[2], greyMedArr)
+
+print(exportThisArrayRED)
