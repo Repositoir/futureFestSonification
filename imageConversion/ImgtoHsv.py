@@ -1,8 +1,10 @@
 import cv2, time
 import matplotlib.pyplot as plt
 import numpy as np
+from midiutil import MIDIFile
+from mingus.core import chords
 
-image = cv2.imread('./imageConversion/eqImg.png')
+image = cv2.imread('./eqImg.png')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def img2SmallImg(img, H_SIZE, W_SIZE):
@@ -55,11 +57,9 @@ count = 0
 
 lst = img2SmallImg(image, H_SIZE, W_SIZE)
 print(lst.shape)
-print(lst[0][0][0])   #This is one pixel, the top right most pixel
+print(lst[0][0][0])
 
-lst[0][0]      #This is one column of pixels
-
-#print(smallImg2AvgArr(lst))
+lst[0][0]
 
 lstOfAvgs = [smallImg2AvgArr(lst[i]) for i in range(len(lst))]
 plt.imshow(lstOfAvgs)
@@ -70,9 +70,55 @@ grayLst = convert2grey(image)
 print(grayLst[0])
 # 28 to 7040
 #
-'''normLst = [[0 for j in range(len(grayLst[0]))] for i in range(len(grayLst))]
-for i in range(len(grayLst)):
-    for j in range(len(grayLst[i])):
-        normNum = map(int(grayLst[i][j]), 0, 255, 28, 7040)
-        normLst[i][j] = normNum
-#print(normLst)'''
+
+normLst = []
+for i in range(len(grayLst[0])):
+    normNum = map(int(grayLst[0][i]), 0, 255, 28, 7040)
+    normLst.append(normNum)
+print(normLst)
+
+NOTES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
+OCTAVES = list(range(11))
+NOTES_IN_OCTAVE = len(NOTES)
+
+
+def freq_to_midi_note(freq):
+    if freq <= 0:
+        raise ValueError("Frequency must be a positive value.")
+    midi_note = int(69 + 12 * np.log2(freq / 440.0))
+    return midi_note
+
+def get_major_triad(midi_note):
+    major_third = midi_note + 4
+    perfect_fifth = midi_note + 7
+    return [midi_note, major_third, perfect_fifth]
+
+
+midi_notes_from_normLst = []
+for freq in normLst:
+    midi_note = freq_to_midi_note(freq)
+    major_triad = get_major_triad(midi_note)
+    midi_notes_from_normLst.append(major_triad)
+
+track = 0
+channel = 0
+time = 0  # In beats
+duration = 1  # In beats
+tempo = 180
+volume = 127  # 0-127
+arpeggio_spacing = 1
+
+MyMIDI = MIDIFile(1)  # One track
+
+
+MyMIDI.addTempo(track, time, tempo)
+
+for i, triad in enumerate(midi_notes_from_normLst):
+    for j, pitch in enumerate(triad):
+        MyMIDI.addNote(track, channel, pitch, time + i * 3 + j * arpeggio_spacing, duration, volume)
+
+# Save the MIDI file
+with open("normLst_melody.mid", "wb") as output_file:
+    MyMIDI.writeFile(output_file)
+
+print("MIDI file saved as 'normLst_melody.mid'")
